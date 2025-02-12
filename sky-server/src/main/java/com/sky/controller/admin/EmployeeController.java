@@ -3,9 +3,11 @@ package com.sky.controller.admin;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.InsertEmployeeException;
 import com.sky.properties.JwtProperties;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
@@ -14,10 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -84,16 +83,62 @@ public class EmployeeController {
      * @param employeeDTO
      * @return
      */
-    @PostMapping("/add")
+    @PostMapping
     @ApiOperation("新增员工")
     public Result addEmployee(@RequestBody EmployeeDTO employeeDTO){
         log.info("新增员工：{}", employeeDTO);
-        try {
-            employeeService.addEmployee(employeeDTO);
-        }catch (InsertEmployeeException e){//插入失败
-            return Result.error(e.getMessage());
-        }
-        //插入成功
+        employeeService.addEmployee(employeeDTO);
+        return Result.success();
+    }
+
+    /**
+     * 分页查询员工
+     * @param employeePageQueryDTO
+     * @return
+     */
+    @GetMapping("/page")
+    @ApiOperation("分页查询员工")
+    public Result<PageResult> page(EmployeePageQueryDTO employeePageQueryDTO){
+        log.info("分页查询员工：{}", employeePageQueryDTO);
+        PageResult pageResult = employeeService.pageQuery(employeePageQueryDTO);
+        return Result.success(pageResult);
+    }
+
+    /**
+     * 停用或启用员工
+     * @return
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("停用或启用员工")
+    public Result startOrStopEmployee(@PathVariable Integer status, Long id){
+        log.info("停用或启用员工：状态-{}, 员工ID-{}", status, id);
+        employeeService.startOrStopEmployee(status, id);
+        return Result.success();
+    }
+
+    /**
+     * 根据ID查询员工
+     * @param id
+     * @return
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据ID查询员工")
+    public Result<Employee> getEmployeeById(@PathVariable Long id){
+        log.info("根据ID查询员工：{}", id);
+        Employee employee = employeeService.getById(id);
+        return Result.success(employee);
+    }
+
+    /**
+     * 编辑员工信息
+     * @param employeeDTO
+     * @return
+     */
+    @PutMapping
+    @ApiOperation("编辑员工信息")
+    public Result update(@RequestBody EmployeeDTO employeeDTO){
+        log.info("编辑员工信息：{}", employeeDTO);
+        employeeService.update(employeeDTO);
         return Result.success();
     }
 }
