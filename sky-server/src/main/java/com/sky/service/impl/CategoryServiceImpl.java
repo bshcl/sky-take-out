@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -98,8 +99,26 @@ public class CategoryServiceImpl implements CategoryService {
       categoryMapper.deleteById(id);
    }
 
-   @Override
+   /**
+    * 修改分类
+    * @param categoryDTO
+    */
    public void updateCategory(CategoryDTO categoryDTO) {
-      //TODO 分类修改功能
+      Category category = new Category();
+      BeanUtils.copyProperties(categoryDTO, category);
+      category.setUpdateTime(LocalDateTime.now());
+      category.setUpdateUser(BaseContext.getCurrentId());
+      categoryMapper.update(category);
    }
+
+   /**
+    * 根据type查询分类
+    * @param type
+    * @return
+    */
+   public List<Category> list(Integer type) {
+      return categoryMapper.list(type);
+   }
+
+
 }
