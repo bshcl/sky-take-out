@@ -106,8 +106,8 @@ public class CategoryServiceImpl implements CategoryService {
    public void updateCategory(CategoryDTO categoryDTO) {
       Category category = new Category();
       BeanUtils.copyProperties(categoryDTO, category);
-      category.setUpdateTime(LocalDateTime.now());
-      category.setUpdateUser(BaseContext.getCurrentId());
+      //category.setUpdateTime(LocalDateTime.now());
+      //category.setUpdateUser(BaseContext.getCurrentId());
       categoryMapper.update(category);
    }
 
